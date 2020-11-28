@@ -163,5 +163,12 @@ void sclisp_test_external(void)
     api->cb->free_func(api->cb, string);
     string = NULL;
 
+    api->set_string(api, "foo", "0456");
+    api->set_string(api, "bar", "0xff");
+    api->get_integer(api, "foo", &integer);
+    printf("integer: %ld\n", integer);
+    api->get_integer(api, "bar", &integer);
+    printf("integer: %ld\n", integer);
+
     sclisp_destroy(s);
 }

@@ -428,6 +428,18 @@ static char* sc_getline(struct sclisp *s)
     return buf;
 }
 
+int sc_scan_integer(const char *buf, long *out)
+{
+    int used = 0;
+    return sscanf(buf, "%li%n", out, &used) == 1 && used == (int)strlen(buf);
+}
+
+int sc_scan_real(const char *buf, double *out)
+{
+    int used = 0;
+    return sscanf(buf, "%lf%n", out, &used) == 1 && used == (int)strlen(buf);
+}
+
 /***************************************************
  * Scope handling functions
  **************************************************/
@@ -695,11 +707,15 @@ static struct Object* some_builtin(struct sclisp *s,
         }                                                                   \
                                                                             \
         if (is_string(obj)) {                                               \
-            int used = 0;                                                   \
             double real = 0.0;                                              \
+            long integer = 0;                                               \
                                                                             \
-            if (sscanf(obj->o.atom.a.string, "%lf%n", &real, &used) == 1 && \
-                    used == (int)strlen(obj->o.atom.a.string)) {            \
+            if (sc_scan_integer(obj->o.atom.a.string, &integer)) {          \
+                *out = integer;                                             \
+                return SCLISP_OK;                                           \
+            }                                                               \
+                                                                            \
+            if (sc_scan_real(obj->o.atom.a.string, &real)) {                \
                 *out = real;                                                \
                 return SCLISP_OK;                                           \
             }                                                               \
@@ -1005,9 +1021,9 @@ static struct Token* lex_expr(struct sclisp *s, const char *expr)
 
 append_tok:
         if (tag == TOK_UNKOWN) {
-            if (sscanf(buf, "%ld.%ld", &integer, &integer) == 1)
+            if (sc_scan_integer(buf, &integer))
                 tag = TOK_INTEGER;
-            else if (sscanf(buf, "%lf", &real) == 1)
+            else if (sc_scan_real(buf, &real))
                 tag = TOK_REAL;
             else if (!strcmp(buf, "nil"))
                 tag = TOK_NIL;
