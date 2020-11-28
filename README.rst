@@ -116,37 +116,39 @@ Invoking mktemp, open, write, and close from SCLisp:
         return SCLISP_OK;
     }
 
-    int main(void)
-    {
-        struct sclisp* s;
-        const struct sclisp_scope_api *api;
-        int i = 0;
-        const char *prog[] = {
-            "(set path (mktemp \"/tmp/sclisp-XXXXXX\"))",
-            "(println path)",
-            "(set fd (open path flags mode))",
-            "(write fd \"Hello, World!\" 13)",
-            "(close fd)",
-            NULL
-        };
+   int main(void)
+   {
+       struct sclisp* s;
+       const struct sclisp_scope_api *api;
+       int i = 0;
+       const char *prog[] = {
+           "(set path (mktemp \"/tmp/sclisp-XXXXXX\"))",
+           "(println path)",
+           "(set fd (open path (| O_WRONLY O_APPEND O_CREAT) 0644))",
+           "(write fd \"Hello, World!\" 13)",
+           "(close fd)",
+           NULL
+       };
 
-        sclisp_init(&s, NULL);
-        api = sclisp_get_scope_api(s);
+       sclisp_init(&s, NULL);
+       api = sclisp_get_scope_api(s);
 
-        sclisp_register_user_func(s, native_mktemp, "mktemp", NULL, NULL);
-        sclisp_register_user_func(s, native_open, "open", NULL, NULL);
-        sclisp_register_user_func(s, native_write, "write", NULL, NULL);
-        sclisp_register_user_func(s, native_close, "close", NULL, NULL);
-        api->set_integer(api, "flags", O_WRONLY | O_APPEND | O_CREAT);
-        api->set_integer(api, "mode", 0644);
+       sclisp_register_user_func(s, native_mktemp, "mktemp", NULL, NULL);
+       sclisp_register_user_func(s, native_open, "open", NULL, NULL);
+       sclisp_register_user_func(s, native_write, "write", NULL, NULL);
+       sclisp_register_user_func(s, native_close, "close", NULL, NULL);
 
-        while (prog[i])
-            sclisp_eval(s, prog[i++]);
+       api->set_integer(api, "O_WRONLY", O_WRONLY);
+       api->set_integer(api, "O_APPEND", O_APPEND);
+       api->set_integer(api, "O_CREAT", O_CREAT);
 
-        sclisp_destroy(s);
+       while (prog[i])
+           sclisp_eval(s, prog[i++]);
 
-        return 0;
-    }
+       sclisp_destroy(s);
+
+       return 0;
+   }
 
 Output from the above program:
 
