@@ -46,6 +46,10 @@
  *    binding to "nil" should also have this functionality?
  *  - Implement macros, possibly just as functions whose arguments
  *    are not evaluated and who then auto-eval returned code?
+ *  - Support coercion from string to integer or float for math
+ *    builtins.
+ *  - Make comparison promotion (integer->real->float) sane. For
+ *    instance, currently 3 == 3.0 and 3.0 == "3.0" but 3 != "3.0".
  *  - Add closure support for lambdas.
  *  - Add some form of boxed type to allow for interior mutability
  *    (ie, immutable container, mutable contents; something like a
