@@ -1426,16 +1426,15 @@ static int math_op(struct Atom *l, const struct Object *r, enum MathOp op)
         if ((_init < 0) && internal_cdr(args)) {                        \
             struct Object *ecar = internal_eval(s, internal_car(args)); \
             ON_ERR_UNREF1_THEN(s, ecar, return NULL);                   \
-            if (!ecar || is_numeric_zero(ecar)) {                       \
-                if (_init == -1) {                                      \
-                    object_unref(s->cb, ecar);                          \
-                    SCLISP_REPORT_ERR(s, SCLISP_NOMEM,                  \
-                            "insufficient arguments");                  \
-                    return NULL;                                        \
-                } else                                                  \
-                    acc.a.integer = 0;                                  \
-            } else                                                      \
+            if (!ecar)                                                  \
+                acc.a.integer = 0;                                      \
+            else if (is_numeric_atom(ecar))                             \
                 acc = ecar->o.atom;                                     \
+            else {                                                      \
+                SCLISP_REPORT_ERR(s, SCLISP_BADARG, NULL);              \
+                object_unref(s->cb, ecar);                              \
+                return NULL;                                            \
+            }                                                           \
             args = internal_cdr(args);                                  \
             object_unref(s->cb, ecar);                                  \
         }                                                               \
@@ -1458,10 +1457,10 @@ static int math_op(struct Atom *l, const struct Object *r, enum MathOp op)
     }
 
 MATH_FUNC(plus, ATOM_ADD, 0)
-MATH_FUNC(minus, ATOM_SUB, -2)
+MATH_FUNC(minus, ATOM_SUB, -1)
 MATH_FUNC(multiply, ATOM_MUL, 1)
 MATH_FUNC(divide, ATOM_DIV, -1)
-MATH_FUNC(mod, ATOM_MOD, -2)
+MATH_FUNC(mod, ATOM_MOD, -1)
 
 #undef MATH_FUNC
 #undef some_number
