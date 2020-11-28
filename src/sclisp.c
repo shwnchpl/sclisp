@@ -37,7 +37,6 @@
  * Master TODO List
  ********************************************************************
  * NICE TO HAVE:
- *  - Implement builtins for bitwise operations.
  *  - Implement more functional builtins (ie, map, foldl, foldr,
  *    filter, etc.).
  *  - Verify that user-builtins and  user scope API functions set
@@ -1349,7 +1348,12 @@ enum MathOp {
     ATOM_DIV,
     ATOM_ADD,
     ATOM_SUB,
-    ATOM_MOD
+    ATOM_MOD,
+    ATOM_AND,
+    ATOM_OR,
+    ATOM_XOR,
+    ATOM_SHL,
+    ATOM_SHR
 };
 
 static int math_op(struct Atom *l, const struct Object *r, enum MathOp op)
@@ -1418,6 +1422,31 @@ static int math_op(struct Atom *l, const struct Object *r, enum MathOp op)
                     return SCLISP_UNSUPPORTED;
                 #endif
             break;
+        case ATOM_AND:
+            if (l->tag != INTEGER)
+                return SCLISP_UNSUPPORTED;
+            l->a.integer &= ar->a.integer;
+            break;
+        case ATOM_OR:
+            if (l->tag != INTEGER)
+                return SCLISP_UNSUPPORTED;
+            l->a.integer |= ar->a.integer;
+            break;
+        case ATOM_XOR:
+            if (l->tag != INTEGER)
+                return SCLISP_UNSUPPORTED;
+            l->a.integer ^= ar->a.integer;
+            break;
+        case ATOM_SHL:
+            if (l->tag != INTEGER)
+                return SCLISP_UNSUPPORTED;
+            l->a.integer <<= ar->a.integer;
+            break;
+        case ATOM_SHR:
+            if (l->tag != INTEGER)
+                return SCLISP_UNSUPPORTED;
+            l->a.integer >>= ar->a.integer;
+            break;
         default:
             return SCLISP_BUG;
     }
@@ -1481,9 +1510,31 @@ MATH_FUNC(minus, ATOM_SUB, -1)
 MATH_FUNC(multiply, ATOM_MUL, 1)
 MATH_FUNC(divide, ATOM_DIV, -1)
 MATH_FUNC(mod, ATOM_MOD, -1)
+MATH_FUNC(logand, ATOM_AND, -1)
+MATH_FUNC(logor, ATOM_OR, 0)
+MATH_FUNC(logxor, ATOM_XOR, 0)
+MATH_FUNC(logshl, ATOM_SHL, -1)
+MATH_FUNC(logshr, ATOM_SHR, -1)
 
 #undef MATH_FUNC
 #undef some_number
+
+BUILTIN_FUNC(lognot)
+{
+    struct sclisp *s = (struct sclisp *)user;
+    struct Object *arg1, *result = NULL;
+
+    BUILTIN_FUNC_ONE_ARG(arg1);
+
+    if (!is_integer(arg1))
+        SCLISP_REPORT_ERR(s, SCLISP_UNSUPPORTED, NULL);
+    else
+        result = some_integer(s, ~arg1->o.atom.a.integer);
+
+    object_unref(s->cb, arg1);
+
+    return result;
+}
 
 BUILTIN_FUNC(set)
 {
@@ -1955,6 +2006,12 @@ void apply_builtins(struct sclisp *s)
     _apply_named_builtin(multiply, "*");
     _apply_named_builtin(divide, "/");
     _apply_builtin(mod);
+    _apply_named_builtin(logand, "&");
+    _apply_named_builtin(logor, "|");
+    _apply_named_builtin(logxor, "^");
+    _apply_named_builtin(logshl, "<<");
+    _apply_named_builtin(logshr, ">>");
+    _apply_named_builtin(lognot, "~");
     _apply_builtin(car);
     _apply_builtin(cdr);
     _apply_builtin(cons);
