@@ -39,12 +39,22 @@
  * NICE TO HAVE:
  *  - Implement more functional builtins (ie, map, foldl, foldr,
  *    filter, etc.).
+ *  - Implement a loop builtin.
  *  - Verify that user-builtins and  user scope API functions set
  *    (or don't set) last error in a consistent way.
  *  - Add "del" builtin to remove a scope binding. Maybe setting a
  *    binding to "nil" should also have this functionality?
  *  - Implement macros, possibly just as functions whose arguments
  *    are not evaluated and who then auto-eval returned code?
+ *  - Add support for backquoting.
+ *  - Add support for multiple statements in a single public API eval
+ *    call.
+ *  - Add support for importing files (optional via some API).
+ *  - Add support for loading shared objects with additional builtins
+ *    defined (such as libraries for things like system bindings, like
+ *    open, close, read, and write, or bindings for libraries like
+ *    ncurses etc). This will probably involve dlopen/LoadLibrary.
+ *  - Consider moving these TODOs into a dedicated file.
  *  - Support coercion from string to integer or float for math
  *    builtins.
  *  - Make comparison promotion (integer->real->float) sane. For
