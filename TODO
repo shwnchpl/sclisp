@@ -1,0 +1,78 @@
+********************************************************************
+* Master TODO List
+********************************************************************
+
+---------------------------------------------------
+- NICE TO HAVE
+---------------------------------------------------
+
+- Implement more functional builtins (ie, map, foldl, foldr,
+  filter, etc.).
+- Implement a loop builtin.
+- Verify that user-builtins and  user scope API functions set
+  (or don't set) last error in a consistent way.
+- Add "del" builtin to remove a scope binding. Maybe setting a
+  binding to "nil" should also have this functionality?
+- Implement macros, possibly just as functions whose arguments
+  are not evaluated and who then auto-eval returned code?
+- Add support for backquoting.
+- Add support for multiple statements in a single public API eval
+  call.
+- Add support for importing files (optional via some API).
+- Add support for loading shared objects with additional builtins
+  defined (such as libraries for things like system bindings, like
+  open, close, read, and write, or bindings for libraries like
+  ncurses etc). This will probably involve dlopen/LoadLibrary.
+- Support coercion from string to integer or float for math
+  builtins.
+- Make comparison promotion (integer->real->float) sane. For
+  instance, currently 3 == 3.0 and 3.0 == "3.0" but 3 != "3.0".
+- Add closure support for lambdas.
+- Add some form of boxed type to allow for interior mutability
+  (ie, immutable container, mutable contents; something like a
+  Rust RefCell).
+- Make lasterror and error message available within LISP code.
+- Add support for comments (with ;). In a way, this already works
+  because everything after the first s-expression is ignored when
+  parsing.
+- Add variadic function support and/or incorrect argc handling.
+- Check function argument syntax on definition.
+- Add/improve unit tests.
+- Clean up memory management in internal tests.
+- Add some sort of assert mechanism?
+- Token/builtin to get result of last expression (similar to
+  Python's _).
+- Run through Valgrind or something (or at least profile with
+  custom allocators) to ensure there are no unknown leaks bopping
+  around.
+- Error handling for apply_builtins.
+- Clean up parsing/lexing, including handling incomplete parens
+  etc.
+- Determine if nil should be allowed as an argument to user
+  builtin functions.
+
+---------------------------------------------------
+- EVENTUALLY
+---------------------------------------------------
+
+- Document everything.
+- Add support for escape sequences when printing (at least \n).
+- Improved builtin data structures (ie, array and hashmap). The
+  hashmap implementation in my old sJSON code could/should do the
+  trick and could probably be used to improve performance on
+  scopes as well.
+- Add support for tab-completion for symbols in scope within
+  the repl.
+- Provide some mechanism for accessing builtins even if they are
+  completely out of scope. Perhaps builtins should exist in an
+  immutable parent scope? Perhaps there is a "builtin" builtin
+  that exists in that scope and that can be passed a string
+  (or something?) to get a reference to manually overwritten
+  builtins? Then again, if you want to shoot yourself in the foot,
+  maybe it's better if I just let you.
+- Better error reporting for user defined functions (ie. don't
+  clobber internal error messages that have been set in wrapper
+  etc.).
+- Make it possible to call sclisp functions *from* C code (while
+  passing C style arguments), somehow.
+- Implement builtins for string construction and manipulation.
