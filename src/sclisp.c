@@ -2106,7 +2106,7 @@ static void user_builtin_wrapper_dtor(void *user)
 
 #define USER_SCOPE_GET_FUNC(_n, _t) \
     static int user_scope_get_##_n(const struct sclisp_scope_api *api,      \
-            char* sym, _t *out)                                             \
+            const char* sym, _t *out)                                       \
     {                                                                       \
         struct sclisp *s;                                                   \
         struct Object *obj = NULL;                                          \
@@ -2138,7 +2138,7 @@ USER_SCOPE_GET_FUNC(string, char*)
 
 #define USER_SCOPE_SET_FUNC(_n, _t) \
     static int user_scope_set_##_n(const struct sclisp_scope_api *api,      \
-            char *sym, _t val)                                              \
+            const char *sym, _t val)                                        \
     {                                                                       \
         struct sclisp *s;                                                   \
         struct Object *obj;                                                 \
@@ -2162,7 +2162,7 @@ USER_SCOPE_GET_FUNC(string, char*)
 
 USER_SCOPE_SET_FUNC(integer, long)
 USER_SCOPE_SET_FUNC(real, double)
-USER_SCOPE_SET_FUNC(string, char*)
+USER_SCOPE_SET_FUNC(string, const char*)
 
 #undef USER_SCOPE_SET_FUNC
 

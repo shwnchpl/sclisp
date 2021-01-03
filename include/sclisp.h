@@ -77,17 +77,18 @@ struct sclisp_func_api {
 };
 
 struct sclisp_scope_api {
-    int (*get_integer)(const struct sclisp_scope_api *api, char *sym,
+    int (*get_integer)(const struct sclisp_scope_api *api, const char *sym,
             long *out);
-    int (*get_real)(const struct sclisp_scope_api *api, char *sym,
+    int (*get_real)(const struct sclisp_scope_api *api, const char *sym,
             double *out);
-    int (*get_string)(const struct sclisp_scope_api *api, char *sym,
+    int (*get_string)(const struct sclisp_scope_api *api, const char *sym,
             char **out);
-    int (*set_integer)(const struct sclisp_scope_api *api, char *sym,
+    int (*set_integer)(const struct sclisp_scope_api *api, const char *sym,
             long val);
-    int (*set_real)(const struct sclisp_scope_api *api, char *sym, double val);
-    int (*set_string)(const struct sclisp_scope_api *api, char *sym,
-            char *val);
+    int (*set_real)(const struct sclisp_scope_api *api, const char *sym,
+            double val);
+    int (*set_string)(const struct sclisp_scope_api *api, const char *sym,
+            const char *val);
     struct sclisp_cb *cb;
     void *inst;
 };
